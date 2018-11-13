@@ -13,6 +13,9 @@ const portfinder = require('portfinder')
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
+const axios = require('axios')
+const bodyParser = require('body-parser')
+
 const devWebpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
@@ -22,6 +25,26 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 
   // these devServer options should be customized in /config/index.js
   devServer: {
+    before(app) {
+      app.use(bodyParser.urlencoded({extended: true}))
+      const querystring = require('querystring')
+
+      app.post('/api/getPremium', bodyParser.json(), function (req, res) {
+        const url = 'https://esales-dev.aegonthtf.com/sales/newpreference_calculatePremium.action'
+
+        axios.post(url, req.body, {
+          headers: {
+            referer: 'https://esales-dev.aegonthtf.com/',
+            host: 'esales-dev.aegonthtf.com',
+            'Content-type': 'application/x-www-form-urlencoded'
+          }
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e) => {
+          console.log(e)
+        })
+      })
+    },
     clientLogLevel: 'warning',
     historyApiFallback: {
       rewrites: [

@@ -4,11 +4,16 @@
   </div>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
+import {getPremium} from 'api/premium'
 export default {
-  name: 'App'
+  created() {
+    getPremium().then((res) => {
+      console.log(res)
+    })
+  }
 }
 </script>
 
-<style>
+<style scoped lang="stylus" rel="stylesheet/stylus">
 </style>
